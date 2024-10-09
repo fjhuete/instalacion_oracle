@@ -20,30 +20,30 @@ fin_formato="\e[0m"
 fichero_kernel="/etc/sysctl.d/60-oracle.conf"
 
 #Parámetros del kernel necesarios
-parametros_kernel="# Oracle EE kernel parameters
-fs.file-max=6815744
-net.ipv4.ip_local_port_range=9000 65000
-kernel.shmmax=536870912
+parametros_kernel="# Oracle EE kernel parameters \n
+fs.file-max=6815744 \n
+net.ipv4.ip_local_port_range=9000 65000 \n
+kernel.shmmax=536870912 \n
 kernel.sem=250 32000 100 128"
 
 #Ruta al script de instalación de Oracle
 fichero_arranque="/sbin/chkconfig"
 
 #Contenido del script de instalación de Oracle
-contenido_arranque="#!/bin/bash
-# Oracle EE installer chkconfig hack
-file=/etc/init.d/oracle-ee-21c
-if [[ ! \`tail -n1 \$file | grep INIT\` ]]; then
-echo >> \$file
-echo '### BEGIN INIT INFO' >> \$file
-echo '# Provides: OracleEE' >> \$file
-echo '# Required-Start: \$remote_fs \$syslog' >> \$file
-echo '# Required-Stop: \$remote_fs \$syslog' >> \$file
-echo '# Default-Start: 2 3 4 5' >> \$file
-echo '# Default-Stop: 0 1 6' >> \$file
-echo '# Short-Description: Oracle Express Edition' >> \$file
-echo '### END INIT INFO' >> \$file
-fi
+contenido_arranque="#!/bin/bash \n
+# Oracle EE installer chkconfig hack \n
+file=/etc/init.d/oracle-ee-21c \n
+if [[ ! \`tail -n1 \$file | grep INIT\` ]]; then \n
+echo >> \$file \n
+echo '### BEGIN INIT INFO' >> \$file \n
+echo '# Provides: OracleEE' >> \$file \n
+echo '# Required-Start: \$remote_fs \$syslog' >> \$file \n
+echo '# Required-Stop: \$remote_fs \$syslog' >> \$file \n
+echo '# Default-Start: 2 3 4 5' >> \$file \n
+echo '# Default-Stop: 0 1 6' >> \$file \n
+echo '# Short-Description: Oracle Express Edition' >> \$file \n
+echo '### END INIT INFO' >> \$file \n
+fi \n
 update-rc.d oracle-ee-21c defaults 80 01"
 
 #Ruta al script que establece la configuración óptima de memoria para Oracle
@@ -51,18 +51,18 @@ fichero_memoria="/etc/rc2.d/S01shm_load"
 
 #Script que establece la configuración de memoria óptima para
 #el funcionamiento de Oracle
-contenido_memoria="#!/bin/sh
-case "\$1" in
-  start)
-    mkdir /var/lock/subsys 2>/dev/null
-    touch /var/lock/subsys/listener
-    rm /dev/shm 2>/dev/null
-    mkdir /dev/shm 2>/dev/null
-    ;;
-  *)
-    echo error
-    exit 1
-    ;;
+contenido_memoria="#!/bin/sh \n
+case "\$1" in \n
+  start) \n
+    mkdir /var/lock/subsys 2>/dev/null \n
+    touch /var/lock/subsys/listener \n
+    rm /dev/shm 2>/dev/null \n
+    mkdir /dev/shm 2>/dev/null \n
+    ;; \n
+  *) \n
+    echo error \n
+    exit 1 \n
+    ;; \n
 esac"
 
 #Declaración de funciones
@@ -132,7 +132,7 @@ f_paquete_instalado () {
 
 #Función que lanza el script /etc/init.d/procps para reiniciar procesos
 f_reiniciar_procs () {
-	$(systemctl start procps)
+	$(sudo systemctl restart procps)
 }
 
 #Función que valida si el script se ejecuta como root y, si hay conexión,
@@ -163,7 +163,7 @@ f_parametros_kernel () {
 	f_validar_fichero $fichero_kernel
 	local validar_fichero=$?
 	if [ $validar_fichero -eq 0 ]; then
-		$(echo $parametros_kernel > $fichero_kernel)
+		$(echo -e $parametros_kernel > $fichero_kernel)
 	else
 		$(touch $fichero_kernel && echo $parametros_kernel > $fichero_kernel)
 	fi
@@ -177,9 +177,9 @@ f_script_arranque () {
 	echo "Configurando el arranque del servidor..."
 	f_validar_fichero $fichero_arranque
 	if [ $? -eq 0 ]; then
-		$(echo $contenido_arranque > $fichero_arranque)
+		$(echo -e $contenido_arranque > $fichero_arranque)
 	else
-		$(touch $fichero_arranque && echo $contenido_arranque > $fichero_arranque)
+		$(touch $fichero_arranque && echo -e $contenido_arranque > $fichero_arranque)
 	fi
 	echo -e ""$verde"[OK]"$fin_formato": Configuración de arranque completa."
 }
@@ -190,9 +190,9 @@ f_script_memoria () {
 	echo "Configurando el uso de la memoria..."
 	f_validar_fichero $fichero_memoria
 	if [ $? -eq 0 ]; then
-		$(echo $contenido_memoria > $fichero_memoria)
+		$(echo -e $contenido_memoria > $fichero_memoria)
 	else
-		$(touch $fichero_memoria && echo $contenido_memoria > $fichero_memoria)
+		$(touch $fichero_memoria && echo -e $contenido_memoria > $fichero_memoria)
 	fi
 	$(chmod 775 $fichero_memoria)
 	echo -e ""$verde"[OK]"$fin_formato": Configuración del uso de la memoria completa."
