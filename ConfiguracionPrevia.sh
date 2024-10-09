@@ -71,7 +71,7 @@ esac"
 
 #Ayuda
 mostrar_ayuda() {
-echo "Uso: $0
+echo -e "Uso: $0
 Descripción: Este script configura el sistema para la instalación Oracle EE 21c en máquinas con sistemas operativos basados en Debian.
 "$negrita"Este script se debe ejecutar con privilegios de root."$fin_formato"
 Es imprescindible contar con espacio de almacenamiento suficiente en el equipo para la instalación del Sistema Gestor de Bases de Datos Oracle.
@@ -138,23 +138,28 @@ f_reiniciar_procs () {
 #Función que valida si el script se ejecuta como root y, si hay conexión,
 #comprueba si están instaladas las dependencias y, si no, las instala.
 f_dependencias () {
+	echo -e "Comprobando dependencias..."
 	f_validar_root
 	f_validar_conexion
 	f_paquete_instalado libaio1 
 	local libaio1=$?
 	if [ $libaio1 -eq 1 ]; then
+		echo -e "Instalando dependencias..."
 		$(apt-get install libaio1 -y) &> /dev/null
 	fi
 	f_paquete_instalado unixodbc
 	local unixodbc=$?
 	if [ $unixodbc -eq 1 ]; then
+		echo -e "Instalando dependencias..."
 		$(apt-get install unixodbc -y) &> /dev/null
 	fi
+	""$verde"[OK]"$fin_formato": Dependencias cumplidas."
 }
 
 #Función que crea o modifica el fichero de configuración que establece
 #los parámetros del kernel.
 f_parametros_kernel () {
+	echo "Configurando los parámetros del kernel..."
 	f_validar_fichero $fichero_kernel
 	local validar_fichero=$?
 	if [ $validar_fichero -eq 0 ]; then
@@ -163,22 +168,26 @@ f_parametros_kernel () {
 		$(touch $fichero_kernel && echo $parametros_kernel > $fichero_kernel)
 	fi
 	f_reiniciar_procs
+	""$verde"[OK]"$fin_formato": Configurados los parámetros del kernel."
 }
 
 #Función que crea el script /sbin/chkconfig. Oracle EE usa este fichero
 #para arrancar el servicio al iniciar el equipo
 f_script_arranque () {
+	echo "Configurando el arranque del servidor..."
 	f_validar_fichero $fichero_arranque
 	if [ $? -eq 0 ]; then
 		$(echo $contenido_arranque > $fichero_arranque)
 	else
 		$(touch $fichero_arranque && echo $contenido_arranque > $fichero_arranque)
 	fi
+	""$verde"[OK]"$fin_formato": Configuración de arranque completa."
 }
 
 #Función que crea el directorio y fichero necesario para la configuración
 #de memoria óptima para el funcionamiento de Oracle
 f_script_memoria () {
+	echo "Configurando el uso de la memoria..."
 	f_validar_fichero $fichero_memoria
 	if [ $? -eq 0 ]; then
 		$(echo $contenido_memoria > $fichero_memoria)
@@ -186,16 +195,17 @@ f_script_memoria () {
 		$(touch $fichero_memoria && echo $contenido_memoria > $fichero_memoria)
 	fi
 	$(chmod 775 $fichero_memoria)
+	""$verde"[OK]"$fin_formato": Configuración del uso de la memoria completa."
 }
 
 #Función que valida que se haya creado el enlace simbólico al directorio
 #/bin/awk
 f_validar_ls () {
-	$(ln --symbolic /usr/bin/awk /bin/awk)
+	$(ln --symbolic /usr/bin/awk /bin/awk) 2> /dev/null
 	if [ $? -eq 1 ]; then
 		return 0
 	else
-		echo -e ""$amarillo"W"$fin_formato": Error en la creación del enlace simbólico al directorio /bin/awk"
+		echo -e ""$amarillo"[W]"$fin_formato": Error en la creación del enlace simbólico al directorio /bin/awk"
 		return 1
 	fi
 }
@@ -206,7 +216,7 @@ f_validar_conf_kernel () {
 	if [ "$filemax" = "fs.file-max = 6815744" ]; then
 		return 0
 	else
-		echo -e ""$amarillo"W"$fin_formato": Error en la configuración del kernel"
+		echo -e ""$amarillo"[W]"$fin_formato": Error en la configuración del kernel"
 		return 1
 	fi
 }
@@ -214,7 +224,7 @@ f_validar_conf_kernel () {
 #Función que finaliza la configuración previa del equipo para la instalación
 #de Oracle
 f_validar_configuracion_previa () {
-	$(mkdir /var/lock/subsys && touch /var/lock/subsys/listener)
+	$(mkdir /var/lock/subsys && touch /var/lock/subsys/listener) 2> /dev/null
 	f_validar_ls
 	f_validar_conf_kernel
 }
