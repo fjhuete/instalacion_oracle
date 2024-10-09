@@ -153,7 +153,7 @@ f_dependencias () {
 		echo -e "Instalando dependencias..."
 		$(apt-get install unixodbc -y) &> /dev/null
 	fi
-	""$verde"[OK]"$fin_formato": Dependencias cumplidas."
+	echo -e ""$verde"[OK]"$fin_formato": Dependencias cumplidas."
 }
 
 #Función que crea o modifica el fichero de configuración que establece
@@ -168,7 +168,7 @@ f_parametros_kernel () {
 		$(touch $fichero_kernel && echo $parametros_kernel > $fichero_kernel)
 	fi
 	f_reiniciar_procs
-	""$verde"[OK]"$fin_formato": Configurados los parámetros del kernel."
+	echo -e ""$verde"[OK]"$fin_formato": Configurados los parámetros del kernel."
 }
 
 #Función que crea el script /sbin/chkconfig. Oracle EE usa este fichero
@@ -181,7 +181,7 @@ f_script_arranque () {
 	else
 		$(touch $fichero_arranque && echo $contenido_arranque > $fichero_arranque)
 	fi
-	""$verde"[OK]"$fin_formato": Configuración de arranque completa."
+	echo -e ""$verde"[OK]"$fin_formato": Configuración de arranque completa."
 }
 
 #Función que crea el directorio y fichero necesario para la configuración
@@ -195,13 +195,13 @@ f_script_memoria () {
 		$(touch $fichero_memoria && echo $contenido_memoria > $fichero_memoria)
 	fi
 	$(chmod 775 $fichero_memoria)
-	""$verde"[OK]"$fin_formato": Configuración del uso de la memoria completa."
+	echo -e ""$verde"[OK]"$fin_formato": Configuración del uso de la memoria completa."
 }
 
 #Función que valida que se haya creado el enlace simbólico al directorio
 #/bin/awk
 f_validar_ls () {
-	$(ln --symbolic /usr/bin/awk /bin/awk) 2> /dev/null
+	$(ln --symbolic /usr/bin/awk /bin/awk 2> /dev/null) 
 	if [ $? -eq 1 ]; then
 		return 0
 	else
@@ -224,7 +224,7 @@ f_validar_conf_kernel () {
 #Función que finaliza la configuración previa del equipo para la instalación
 #de Oracle
 f_validar_configuracion_previa () {
-	$(mkdir /var/lock/subsys && touch /var/lock/subsys/listener) 2> /dev/null
+	$(mkdir /var/lock/subsys 2> /dev/null && touch /var/lock/subsys/listener 2> /dev/null) 
 	f_validar_ls
 	f_validar_conf_kernel
 }
