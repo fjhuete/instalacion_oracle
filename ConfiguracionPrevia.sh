@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #Autor: Francisco Javier Huete Mejías
-#Descripción: Prepara el sistema para la instalación de Oracle XE 21c en SO basados en Debian
+#Descripción: Prepara el sistema para la instalación de Oracle EE 21c en SO basados en Debian
 
 #Declaración de variables
 
@@ -20,7 +20,7 @@ fin_formato="\e[0m"
 fichero_kernel="/etc/sysctl.d/60-oracle.conf"
 
 #Parámetros del kernel necesarios
-parametros_kernel="# Oracle XE kernel parameters
+parametros_kernel="# Oracle EE kernel parameters
 fs.file-max=6815744
 net.ipv4.ip_local_port_range=9000 65000
 kernel.shmmax=536870912
@@ -31,12 +31,12 @@ fichero_arranque="/sbin/chkconfig"
 
 #Contenido del script de instalación de Oracle
 contenido_arranque="#!/bin/bash
-# Oracle XE installer chkconfig hack
-file=/etc/init.d/oracle-xe-21c
+# Oracle EE installer chkconfig hack
+file=/etc/init.d/oracle-ee-21c
 if [[ ! \`tail -n1 \$file | grep INIT\` ]]; then
 echo >> \$file
 echo '### BEGIN INIT INFO' >> \$file
-echo '# Provides: OracleXE' >> \$file
+echo '# Provides: OracleEE' >> \$file
 echo '# Required-Start: \$remote_fs \$syslog' >> \$file
 echo '# Required-Stop: \$remote_fs \$syslog' >> \$file
 echo '# Default-Start: 2 3 4 5' >> \$file
@@ -44,7 +44,7 @@ echo '# Default-Stop: 0 1 6' >> \$file
 echo '# Short-Description: Oracle Express Edition' >> \$file
 echo '### END INIT INFO' >> \$file
 fi
-update-rc.d oracle-xe-21c defaults 80 01"
+update-rc.d oracle-ee-21c defaults 80 01"
 
 #Ruta al script que establece la configuración óptima de memoria para Oracle
 fichero_memoria="/etc/rc2.d/S01shm_load"
@@ -72,7 +72,7 @@ esac"
 #Ayuda
 mostrar_ayuda() {
 echo "Uso: $0
-Descripción: Este script configura el sistema para la instalación Oracle XE 21c en máquinas con sistemas operativos basados en Debian.
+Descripción: Este script configura el sistema para la instalación Oracle EE 21c en máquinas con sistemas operativos basados en Debian.
 "$negrita"Este script se debe ejecutar con privilegios de root."$fin_formato"
 Es imprescindible contar con espacio de almacenamiento suficiente en el equipo para la instalación del Sistema Gestor de Bases de Datos Oracle.
 "$negrita"Se recomienda contar con, al menos, 15GB de espacio de almacenamiento disponible y 2GB de RAM."$fin_formato""
@@ -85,6 +85,7 @@ f_validar_root () {
 		return 0
 	else
 		echo -e ""$rojo"E""$fin_formato"": Este script se debe ejecutar con privilegios de root."
+		mostrar_ayuda
 		return 1
 	fi
 }
@@ -142,12 +143,12 @@ f_dependencias () {
 	f_paquete_instalado libaio1 
 	local libaio1=$?
 	if [ $libaio1 -eq 1 ]; then
-		$(apt-get install libaio1 -y)
+		$(apt-get install libaio1 -y) &> /dev/null
 	fi
 	f_paquete_instalado unixodbc
-	local $unixodbc=$?
-	if [ unixodbc -eq 1 ]; then
-		$(apt-get install unixodbc -y)
+	local unixodbc=$?
+	if [ $unixodbc -eq 1 ]; then
+		$(apt-get install unixodbc -y) &> /dev/null
 	fi
 }
 
@@ -164,7 +165,7 @@ f_parametros_kernel () {
 	f_reiniciar_procs
 }
 
-#Función que crea el script /sbin/chkconfig. Oracle XE usa este fichero
+#Función que crea el script /sbin/chkconfig. Oracle EE usa este fichero
 #para arrancar el servicio al iniciar el equipo
 f_script_arranque () {
 	f_validar_fichero $fichero_arranque
