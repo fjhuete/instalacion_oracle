@@ -62,11 +62,20 @@ f_validar_conexion () {
 	fi
 }
 
+#Validar si existe un fichero
+f_validar_fichero() {
+	if [ ! -f "$1" ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
 #Funciones del script
 
 #Función que lanza el script /etc/init.d/procps para reiniciar procesos
-f_reiniciar_procs () {
-	$(sudo systemctl restart procps)
+f_reiniciar_bashrc () {
+	$(source ~/.bashrc)
 }
 
 #Función añade al fichero .bashrc las variables de entorno necesarias para el funcionamiento de Oracle.
@@ -79,14 +88,14 @@ f_variables_bashrc () {
 	else
 		$(touch $fichero_bashrc && echo $variables_bashrc > $fichero_bashrc)
 	fi
-	f_reiniciar_procs
+	f_reiniciar_bashrc
 	echo -e ""$verde"[OK]"$fin_formato": Configuradas las variables de entorno."
 }
 
 #Función que arranca el servicio de Oracle
 f_arrancar_servicio () {
 	echo "Arrancando el servico..."
-	$(systemctl start oracle-ee-21c.service)
+	$(sudo systemctl start oracle-ee-21c.service)
 	echo -e ""$verde"[OK]"$fin_formato": Servicio arrancado."
 }
 
