@@ -84,9 +84,9 @@ f_validar_root () {
 	if [ "$uid" -eq 0 ]; then
 		return 0
 	else
-		echo -e ""$rojo"E""$fin_formato"": Este script se debe ejecutar con privilegios de root."
+		echo -e ""$rojo"[E]""$fin_formato"": Este script se debe ejecutar con privilegios de root."
 		mostrar_ayuda
-		return 1
+		exit 1
 	fi
 }
 
@@ -95,7 +95,8 @@ f_validar_conexion () {
 	if ping -c 1 -W 1 8.8.8.8 &> /dev/null; then
 		return 0
 	else
-		return 1
+		echo -e ""$rojo"[E]""$fin_formato"": No hay conexión a Internet para instalar las dependencias."
+		exit 1
 	fi
 }
 
@@ -138,8 +139,8 @@ f_reiniciar_procs () {
 #Función que valida si el script se ejecuta como root y, si hay conexión,
 #comprueba si están instaladas las dependencias y, si no, las instala.
 f_dependencias () {
-	echo -e "Comprobando dependencias..."
 	f_validar_root
+	echo -e "Comprobando dependencias..."
 	f_validar_conexion
 	f_paquete_instalado libaio1 
 	local libaio1=$?
