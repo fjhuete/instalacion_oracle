@@ -95,7 +95,7 @@ f_variables_bashrc () {
 #Función que arranca el servicio de Oracle
 f_arrancar_servicio () {
 	echo "Arrancando el servico..."
-	$(sudo systemctl start oracle-ee-21c.service)
+	$(sudo systemctl start oracledb_ORCLCDB-21c.service)
 	echo -e ""$verde"[OK]"$fin_formato": Servicio arrancado."
 }
 
