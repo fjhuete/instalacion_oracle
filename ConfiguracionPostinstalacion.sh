@@ -22,12 +22,12 @@ fichero_bashrc="/home/debian/.bashrc"
 #Parámetros del kernel necesarios
 variables_bashrc="
 #Variables Oracle
-export ORACLE_HOME=/opt/oracle/product/21c/dbhome_1 \n
-export ORACLE_SID=ORCLCDB \n
-export ORACLE_BASE=/opt/oracle \n
-export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH \n
-export PATH=$ORACLE_HOME/bin:$PATH \n
-export NLS_LANG=AMERICAN.US7ASCII"
+export ORACLE_HOME=/opt/oracle/product/21c/dbhome_1
+export ORACLE_SID=ORCLCDB
+export ORACLE_BASE=/opt/oracle
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+export PATH=$ORACLE_HOME/bin:$PATH
+export NLS_LANG=SPANISH_SPAIN.UTF8"
 
 #Declaración de funciones
 
