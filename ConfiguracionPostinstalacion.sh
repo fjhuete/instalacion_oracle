@@ -23,7 +23,7 @@ fichero_bashrc="/home/debian/.bashrc"
 variables_bashrc="
 #Variables Oracle
 export ORACLE_HOME=/opt/oracle/product/21c/dbhome_1 \n
-export ORACLE_SID=ORCLDB \n
+export ORACLE_SID=ORCLCDB \n
 export ORACLE_BASE=/opt/oracle \n
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH \n
 export PATH=$ORACLE_HOME/bin:$PATH \n
@@ -97,7 +97,7 @@ f_variables_bashrc () {
 #Función que arranca el servicio de Oracle
 f_arrancar_servicio () {
 	echo "Arrancando el servico..."
-	$(sudo systemctl start oracledb_ORCLCDB-21c.service)
+	$(sudo /etc/init.d/oracledb_ORCLCDB-21c start)
 	echo -e ""$verde"[OK]"$fin_formato": Servicio arrancado."
 }
 
