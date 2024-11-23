@@ -20,8 +20,10 @@ fin_formato="\e[0m"
 fichero_bashrc="/home/debian/.bashrc"
 
 #Parámetros del kernel necesarios
-variables_bashrc="export ORACLE_HOME=/opt/oracle/product/21c/dbhomeXE \n
-export ORACLE_SID=XE \n
+variables_bashrc="
+#Variables Oracle
+export ORACLE_HOME=/opt/oracle/product/21c/dbhome_1 \n
+export ORACLE_SID=ORCLDB \n
 export ORACLE_BASE=/opt/oracle \n
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH \n
 export PATH=$ORACLE_HOME/bin:$PATH \n
